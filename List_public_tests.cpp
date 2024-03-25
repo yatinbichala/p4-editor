@@ -15,7 +15,9 @@ TEST(test_traversal) {
         list.push_back(i);
     }
     int j = 0;
-    for (List<int>::Iterator it = list.begin(); it != list.end(); ++it, ++j) {
+    List<int>::Iterator begin = list.begin();
+    List<int>::Iterator end = list.end();
+    for (List<int>::Iterator it = begin; it != end; ++it, ++j) {
         ASSERT_EQUAL(*it, j);
     }
     ASSERT_EQUAL(j, list.size());
