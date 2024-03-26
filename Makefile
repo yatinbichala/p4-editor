@@ -6,6 +6,7 @@ CXX ?= g++
 
 # Compiler flags
 CXXFLAGS ?= -Wall -Werror -pedantic -g --std=c++17 -Wno-sign-compare -Wno-comment
+#CXXFLAGS += -fsanitize=address
 
 # Run regression tests
 test: test-list test-text-buffer

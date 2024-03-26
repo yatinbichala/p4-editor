@@ -21,7 +21,7 @@ public:
 
   //EFFECTS:  returns true if the list is empty
   bool empty() const {
-    return(num_nodes == 0);
+    return(num_nodes == 0 && (first == last));
   }
 
   //EFFECTS: returns the number of elements in this List
@@ -34,12 +34,14 @@ public:
   //REQUIRES: list is not empty
   //EFFECTS: Returns the first element in the list by reference
   T & front() {
+    if(empty()) {assert(false);}
     return(first->datum);
   }
 
   //REQUIRES: list is not empty
   //EFFECTS: Returns the last element in the list by reference
   T & back() {
+    if(empty()) {assert(false);}
     return(last->datum);
   }
 
@@ -77,10 +79,9 @@ public:
   //MODIFIES: may invalidate list iterators
   //EFFECTS:  removes the item at the front of the list
   void pop_front() {
-    if (empty()) { return; }
+    if (empty()) { assert(false); }
     Node *to_delete = first;
-    //why can't I do first == last, this feels more safe than num_nodes == 1;=
-    if (num_nodes != 1) {first = first->next;}
+    if (first != last) {first = first->next;}
     delete to_delete;
     num_nodes--;
   }
@@ -89,9 +90,10 @@ public:
   //MODIFIES: may invalidate list iterators
   //EFFECTS:  removes the item at the back of the list
   void pop_back() {
-    if (empty()) { return; }
+    if (empty()) { assert(false); }
     Node *to_delete = last;
-    last = last->prev;
+    //checking one element
+    if (first != last) {last = last->prev;}
     delete to_delete;
     num_nodes--;
   }
@@ -134,6 +136,7 @@ private:
   //REQUIRES: list is empty
   //EFFECTS:  copies all nodes from other to this
   void copy_all(const List<T> &other) {
+    if (!empty()) { assert(false); }
     for (Node *np = other.first; np; np = np->next) {
       push_back(np->datum);
     }
@@ -233,13 +236,11 @@ public:
       assert(list_ptr);
       if (node_ptr) {
         node_ptr = node_ptr->next;
-      }// else { // incrementing an end Iterator moves it to the last element
-      //   node_ptr = list_ptr->first;
-      // }
+      }
       return *this;
     }
   
-    Iterator operator++(int /*dummy*/) { // postfix -- (e.g. it--)
+    Iterator operator++(int /*dummy*/) { // postfix -- (e.g. it++)
       Iterator copy = *this;
       operator++();
       return copy;
@@ -302,10 +303,8 @@ public:
     }
     else {
       //points to the previous node's previous pointer to 
-      Node *i_prev = i.node_ptr->prev;
-      Node *i_next = i.node_ptr->next;
-      i_prev->next = i.node_ptr->next;
-      i_next->prev = i.node_ptr->prev;
+      i.node_ptr->prev->next = i.node_ptr->next;
+      i.node_ptr->next->prev = i.node_ptr->prev;
       Iterator temp(i.list_ptr,  i.node_ptr->next);
       delete i.node_ptr;
       return(temp);
@@ -346,6 +345,7 @@ public:
   }
 
 };//List
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Add your member function implementations below or in the class above
